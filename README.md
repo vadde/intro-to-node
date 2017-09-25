@@ -1,54 +1,58 @@
-Introduction to Node.js by Paul O'Fallon
-Code snippetsare  based on the course, with some modification, additional code comments and explanation
+# Introduction to Node.js by Paul O'Fallon
+### Code snippets based on the course with additional explanation
+
+## Node.js 
 
 -	Server-side JavaScript platform
 -	Evented I/O for Chrome V8 JavaScript Engine
 
-1. Installation
+## Installation for Windows
 -	Node.js Windows installer download: https://nodejs.org/en/
 
-2. Node.js Building Blocks
+## Node.js Building Blocks
 
-libuv + V8 + js,c++ = Node.js
+|    **libuv + V8 + js,c++ = Node.js**    |
+|-----------------------------------------|
 
--	Libuv – Abstracts several Unix-only libraries that were once directly required by the project. 
-It was built as part of porting Node.js to the Windows environment.
--	V8 Google’s JavaScript Engine – the same engine found in the Chrome web browser. 
--	The custom JS and C++ code developed specifically for the Node.js platform itself.
 
-3. NVM – Node Version Manager
+-	**libuv** – Abstracts several Unix-only libraries that were once directly required by the project. It was built as part of porting Node.js to the Windows environment.
+-	**V8 Google’s JavaScript Engine**  – the same engine found in the Chrome web browser. 
+-	**Custom JS and C++ code**  developed specifically for the Node.js platform itself.
+
+## NVM – Node Version Manager
 - Manage multiple versions of Node (in the same manner as Ruby’s RVM)
 - Windows Installer https://github.com/coreybutler/nvm-windows/releases
 
-nvm list           - list installed versions on the system
-nvm list available – list available versions for installation
-node -v            – see currently used version
-nvm install {version}  - install the selected version of Node.js
-                     optional argument: architecture
+|    **Command**    | **Description** |
+|----------------|------------|
+|  **nvm list**  | list all Node.js versions installed on the system |
+|  **nvm list available** | list all Node.js that are available for installation  |
+| **node -v** | see currently used version of Node.js  |
+| **nvm install {version}** | install the selected version of Node.js, optional argument: {architecture}, e.g. nvm use 0.12.9 64  |
+| **nvm use {version}** | use this already installed version  |
+            
 
-nvm use {version} - use this already installed version
+## How to program using Node.js?
+- Using **node** directly, writing Node.js and JavaScript code in the console. 
+- Running a JS script file **node {fileName}.js** 
+- On your local system or using https://c9.io, **Cloud9** online IDE for Node.js, mostly written in Node.js itself. 
+![grafik](https://user-images.githubusercontent.com/2240623/30827614-036ee0e6-a23b-11e7-8240-75ecbd178d91.png)
+![grafik](https://user-images.githubusercontent.com/2240623/30827690-430db9ac-a23b-11e7-8b47-f9ac28f6595c.png)
 
-5. Using node directly via terminal
-Write Node.js and JavaScript code in the terminal. 
 
-6. Using node by running a JS script file
-node {fileName}.js
+# intro-to-node/1-introduction/   - Node.js Introduction
 
-Module 1
-Node.js Introduction
-   1-setTimeout.js
-Anynomous callbacks with closures
-setTimeout(callback, timeut) and setInterval(callback, interval) built-in functions
-   2-setTimeout-named.js
-Named callback functions
-   3-server.js
-Creates a server listening on the port 1337 and the content is “Hello world”. 
-// TODO ADD IMAGE
+###   1-setTimeout.js
+- Anynomous callbacks with closures
+- *setTimeout(callback, timeut)* and *setInterval(callback, interval)* built-in functions
+###    2-setTimeout-named.js
+- Named callback functions
+###    3-server.js
+- Creates a server listening on the port 1337. The body content is “Hello world”. 
 
-Cloud9 Development environment
-// Add image
+![alt text](https://user-images.githubusercontent.com/2240623/30827424-57d66344-a23a-11e7-94d5-a1848df5529b.png "server listening on the port 1337")
 
-Node’s Event Loop
+## Node’s Event Loop
 
 Similar to the browser, that is waiting for keyboard and mouse events, the server is constantly waiting for events. 
 They can be externally or internally generated:
@@ -56,32 +60,30 @@ They can be externally or internally generated:
 -	TCP connections
 -	Timers
 -	Internal events
+
 Additionally, other events may be triggered as a response to a request against an external resource
 -	Asking node to open a file for reading
 -	Fire an event when the file is open and ready
 -	Sending a message to an external process will fire an event when the message has been sent
 etc. 
 
-Some events will overlap. For instance we can receive a timer event after a request for opening a file has been received and before the file is open. 
-TCP and HTTP requests can be received while we are sending a message to an external process. 
-Node does not pause and wait for any of these events to complete, it continues to react to events as they arrive.
+Some events will overlap. For instance we can receive a timer event after a request for opening a file has been received and before the file is open. TCP and HTTP requests can be received while we are sending a message to an external process. Node does not pause and wait for any of these events to complete, it continues to react to events as they arrive.
 
-A common example to demonstrate this non-blocking event-driven communication is a web application that fetches data from a database. 
-The application raises an event, an HTTP request is received, this event generates a query for the database. Node receives an event from the database that the query is complete, an HTTP response is formulated. While it is waiting for a response from the database, node is not blocked and is free to handle additional requests. 
+A common example to demonstrate this non-blocking event-driven communication is a web application that fetches data from a database. The application raises an event, an HTTP request is received, this event generates a query for the database. Node receives an event from the database that the query is complete, an HTTP response is formulated. While it is waiting for a response from the database, node is not blocked and is free to handle additional requests. 
 
 On the other hand, traditional serverside programming requires multiple threads for multiple requests. 
 
- Difference between synchronous and asynchronous code
- Synchronous - Each function returns a value before the next is called. 
- Asynchronous - callbacks are used, the result object is an event emmiter, which is capable of emitting events in the future. 
+ ## Difference between synchronous and asynchronous Node.js code
+ - Synchronous - Each function returns a value before the next is called. 
+ - Asynchronous - callbacks are used, the result object is an event emmiter, which is capable of emitting events in the future. 
  
- 4-evenDoubler.js
+ ### 4-evenDoubler.js
  Demonstrates a case when we have multiple calls and the result does not have to be in the same order as the invocation, since the calls need a different, random amount of time. 
  // TODO add images
- 5-evenDoubler-forLoop.js
+ ### 5-evenDoubler-forLoop.js
  When we call the function in a for-loop, the order of the results can also not be predicted. 
  // TODO add images
- 6-evenDoubler-counter.js
+ ### 6-evenDoubler-counter.js
 Change the named function to an anonymous one and increment a counter. Only when the counter comes to 10, write that "Done". 
 
 Using modules in your application
