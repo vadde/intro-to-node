@@ -207,109 +207,190 @@ split into two files, using *this* and *util.inherits*
 
 - Streams are instances of EventEmitter with an agreed upon interface.
 
-- A stream is an instance of a ReadableStream or WriteableStrea or both.
+- A stream is an instance of a ReadableStream or WriteableStream or both.
 
-Interface for a ReadableStream
-readable - boolean indicator if the stream is readable or not
-event: "data" - new data has arrived
-event: "end" - there is no more data
-event: "error"
-event: "close"
+**Interface for a ReadableStream**
+
+- *readable* - boolean indicator if the stream is readable or not
+
+Events:
+
+- "data" - new data has arrived
+- "end" - there is no more data
+- "error"
+- "close"
+
+Functions:
+
+- pause()
+- resume()
+- destroy()
+- pipe()
+
+### 3-readable-stream.js
+
+The "request" module is a simple HTTP client interface, which also represents a stream.   
+
+**Interface for a WritableStream** 
+
+- writable - boolean indicator if the stream is writable or not
+
+Events: 
+
+- "drain" - it is safe to write to a stream
+- "error"
+- "close"
+- "pipe" - passed a readable stream to the pipe function
+
 Functions
-pause(), resume(), destroy(), pipe()
-Example: request(simple HTTP client interface)  3-readable-stream.js
 
-Interface for a WritableStream
-writable - boolean indicator if the stream is writable or not
-event: "drain" - it is safe to write to a stream
-event: "error"
-event: "close"
-event: "pipe" - passed to a readable streams pipe function
-Functions
-write(), end(), destroy(), destroySoon()
-Example:  stdout 4-writeable-stream.js
+- write()
+- end()
+- destroy()
+- destroySoon()
 
-Piping - 5-pipe.js
+
+### 4-writeable-stream.js
+
+stdout is an example for a writeable stream. 
+
+## Piping 
 
 Similar to piping commands in Unix, data read from the readable stream is piped to the writeable stream. Node handles well the situation when a readable stream produces data that a writeable stream cannot so quickly consume. 
 
-ReadableStream pipe() -> WritableStream event 'pipe'
-When you invoke a pipe function on a readable stream, you pass as an argument the writeable stream you want to pipe to. This in turn emits the pipe event on the writeable stream.
+- **ReadableStream pipe() -> WritableStream event 'pipe'**
 
-ReadableStream event "data" -> WritableStream write()
-When data arrives to the readable stream, the data event is emitted and the write function on the writeable stream is invoked. 
+When you invoke a *pipe()* function on a readable stream, you pass as an argument the writeable stream you want to pipe to. This in turn emits the *pipe* event on the writeable stream.
 
-WritableStream write() returns false -> ReadableStream pause()
-If at some point the write function returns a false value, indicating that no more data should be written, the pause function of the readable stream is called to stop the flow of data. 
+- **ReadableStream event "data" -> WritableStream write()**
 
-WritableStream event 'drain' -> ReadableStream resume()
-Then, once the writeable stream is ready again (the drain event is emitted), the resume() for the reading stream is called. 
+When data arrives to the readable stream, the *data* event is emitted and the *write()* function on the writeable stream is invoked. 
 
-ReadableStream event 'end' -> WritableStream end()
-One the readable stream is finished, the end event is emitted and the end() function of the writeable stream is called. 
+- **WritableStream write() returns false -> ReadableStream pause()**
 
-Piping the resulting request stream to standard output: 5-pipe-request-standard-output
-Piping the request to the file system - 6-pipe-request-filesystem.js
-A stream that is both readable and writeable (request to a zipped file) - 7-pipe-request-zip.js
-CreateGZip returns a stream that is both readable and writeable. It reads and uncompressed content, outputs compressed content. 
-zcat - Linux command for openning zipped file
+If at some point the *write()* function returns a false value, indicating that no more data should be written, the *pause()* function of the readable stream is called to stop the flow of data. 
+
+- **WritableStream event 'drain' -> ReadableStream resume()**
+
+Then, once the writeable stream is ready again (the *drain* event is emitted), the *resume()* for the reading stream is called. 
+
+- **ReadableStream event 'end' -> WritableStream end()**
+
+One the readable stream is finished, the *end* event is emitted and the *end()* function of the writeable stream is called. 
+
+
+### 5-pipe-request-standard-output
+
+This example represents piping the resulting request stream to standard output. 
+
+### 6-pipe-request-filesystem.js
+
+This example shows Piping the request stream to the file system. 
+
+### 7-pipe-request-zip.js
+
+Herw we have a stream that is both readable and writeable (request stream piped to a zipped file).
+
+*CreateGZip* returns a stream that is both readable and writeable. It reads and uncompressed content, outputs compressed content.
+
+*zcat* - Linux command for openning zipped file
+
 
 # intro-to-node/4-system/ - Accessing the local system
-1) The process object: 1-process.js
+
+## The "process" object
+
+### 1-process.js
+
 The process object provides a way for your application to manage its own processes as well as other processes on the system. It is available by default in your node application, it does not need to be required. 
 
-A collection of streams
-process.stdin – readable stream
-process.stdout – writeable stream
-process.stderr – writeable stream
+A collection of streams:
 
-Attributes of the current process
-process.env – list of environment variables
-process.argv – command line arguments
-process.cwd - current working directory
-process.pid etc.
+- *process.stdin* – readable stream
+- *process.stdout* – writeable stream
+- *process.stderr* – writeable stream
 
-Process related actions
-process.abort()
-process.kill()
-process.chdir() - change directory
-etc.
+Attributes of the current process:
 
-It is also an instance of the EventEmmiter, it emits an event exit when a process is about to exit, emits an ecent uncaughtException if an exception gets to the eventloop. 
+- *process.env* – list of environment variables
+- *process.argv* – command line arguments
+- *process.cwd* - current working directory
+- *process.pid* - process id etc.
+
+Process related actions:
+- *process.abort()*
+- *process.kill()*
+- *process.chdir()* - change directory etc.
+
+It is also an instance of the EventEmmiter, it emits an event *exit* when a process is about to exit and throws an  *uncaughtException* if an exception gets to the eventloop. 
 
 
-Interacting with the File System
-Synchronous approach - 2-fs-sync.js
-Asynchronous approach - 3-fs-async.js
+## Interacting with the File System
+ 
 
-Buffers
-The Buffer class provides a raw memory allocation for dealing with binary data directly
+### 2-fs-sync.js
+Synchronous approach, using functions that end with *Sync*:
+
+- *existsSync* - if the file or directory exists
+- *unlinkSync* - delete a file
+- *rmdirSync* - delete a directory
+- *mkdirSync* - create a directory
+- *writeFileSync* - write to a file
+- *renameSync* - rename a file.
+
+### 3-fs-async.js
+
+Asynchronous approach, with corresponding functions, without *Sync* in the end. 
+
+## Buffers
+The Buffer class provides a raw memory allocation for dealing with binary data directly.
+
 Buffers can be converted to/from strings using an encoding - ascii, utf8(default), binary, hex etc.
-Example: 4-buffers.js
+
+### 4-buffers.js
 
 # intro-to-node/5-web/ - Making web requests in Node.js
-1. Making a client using http module
+
+## Client requests
+
+###  1-http-url-request.js
+
+- Making a client using *http* module
+
+```js
 http.request(options, callback)
-callback recieves the response
-URL as the options parameter - 1-http-url-request.js
-status code, request.end
-opctions -  2-http-options-request.js
-http.get() no req.end is needed - 3-http-get.js
+```
+- The *options* argument is in this case a URL.
+- The callback recieves the response and status code
+- ```js request.end() ``` is necessary in order to execute the request. 
 
-2. Making a web server
-call the http.createServer function which accepts a single function as
-an argument, which accepts both a request and a response. This function is invoked on each request. 
-4-http-server.js
 
-3. Web sockets
-5-websockets.js (server code) and index.html (client code)
+### 2-http-options-request.js
+- Using host, port, path and method instead of an URL in the options argument. 
 
-intro-to-node/6-testing/
 
-# intro-to-node/6-testing/ - Testing node.js applications (basic)
-1. Assert
-2. Mocha
-3. Should.js
+### 3-http-get.js
+- ```js http.get()``` is more simple than ```js http.request(options, callback)``` no ```js req.end()``` is needed 
+
+## Making a web server
+
+### 4-http-server.js
+- call the ```js http.createServer()``` function which accepts a single function as an argument, which accepts both a request and a response. This function is invoked on each request. 
+
+
+## Web sockets
+
+### 5-websockets.js
+- Server code
+
+### index.html
+- Client code
+
+# intro-to-node/6-testing/ - Testing node.js applications
+
+- *Assert* module
+- *Mocha* framework
+- *Should.js* module
 
 # intro-to-node/7-scaling/ - Scaling node.js applications
 child_process - exec, spawn, fork
