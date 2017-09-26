@@ -43,10 +43,13 @@
 # intro-to-node/1-introduction/   - Node.js Introduction
 
 ###   1-setTimeout.js
+-  Log "Hello" immediately and "world" after 1000ms
 - Anynomous callbacks with closures
-- *setTimeout(callback, timeut)* and *setInterval(callback, interval)* built-in functions
+- *setTimeout(callback, timeut)* and *setInterval(callback, interval)* are built-in functions, available from the global namespace. The first argument of the functions is a callback function and the second argument is the number of miliseconds for timeout/interval. 
+
 ###    2-setTimeout-named.js
-- Named callback functions
+- Named callback functions (name of the callback is "handleTimeout")
+- Log "Timeout at 200ms" after 200ms
 ###    3-server.js
 - Creates a server listening on the port 1337. The body content is “Hello world”. 
 
@@ -74,73 +77,137 @@ A common example to demonstrate this non-blocking event-driven communication is 
 On the other hand, traditional serverside programming requires multiple threads for multiple requests. 
 
  ## Difference between synchronous and asynchronous Node.js code
- - Synchronous - Each function returns a value before the next is called. 
- - Asynchronous - callbacks are used, the result object is an event emmiter, which is capable of emitting events in the future. 
+ - *Synchronous* - Each function returns a value before the next is called. 
+ - *Asynchronous* - callbacks are used, the result object is an event emmiter, which is capable of emitting events in the future. 
  
  ### 4-evenDoubler.js
- Demonstrates a case when we have multiple calls and the result does not have to be in the same order as the invocation, since the calls need a different, random amount of time. 
- // TODO add images
+The callback waits a random time, doubles the input if it is even, throws an error if it is odd. 
+This example demonstrates a case when we have multiple calls and the result does not have to be in the same order as the invocation, since the calls need a different, random amount of time. 
+
+ 
  ### 5-evenDoubler-forLoop.js
  When we call the function in a for-loop, the order of the results can also not be predicted. 
- // TODO add images
+ 
+![grafik](https://user-images.githubusercontent.com/2240623/30870830-375cc21a-a2e5-11e7-95cb-37d1f3e09bad.png)
+![grafik](https://user-images.githubusercontent.com/2240623/30870908-6a75f9d2-a2e5-11e7-94c4-74b1cd3c35f2.png)
+
+
  ### 6-evenDoubler-counter.js
-Change the named function to an anonymous one and increment a counter. Only when the counter comes to 10, write that "Done". 
+Change the named function to an anonymous one and increment a counter. Only when the counter comes to 10, write that "Done".
 
-Using modules in your application
-Modules are a way to bring external functionality into your node.js application. 
-The require function loads a module and assigns it to a variable so that it can be used in your application. 
-Convention: Camel case is used for variables that can be instantiated with new. 
-Import whole module
+![grafik](https://user-images.githubusercontent.com/2240623/30870967-95a91eb8-a2e5-11e7-9f36-121378bb37c0.png)
+![grafik](https://user-images.githubusercontent.com/2240623/30870983-a24f6ec4-a2e5-11e7-8fd1-351ca35d7d8f.png)
+
+
+# intro-to-node/2-modules/ -  Using modules in your application
+
+Modules are a way to bring external functionality into your Node.js application. 
+The *require* function loads a module and assigns it to a variable so that it can be used in your application. 
+
+Convention: *Camel case* is used for variables that can be instantiated with *new*. 
+
+### a) Import whole module
+
+```js
 var module = require("module_name");
-Import one variable or function of the module
+```
+### b) Import one variable or function of the module
+
+
+```js
 var variable = require("module_name").variableName;
-There are three sources for modules
-1. Built-in modules
-a) Pre-packaged with node 
-setInterval and setTimeout are in the node global namespace
-b) The ones that have to be required (most)
-The arguements of the require method is the string identifier of the module
-Example "os" module in 1-builtins.js
-2. Project files
-1) Each .js file is its own module, a way of modularizing application's code. 
-We do not include the .js extension in the require. One uses relative path navigation. 
-Example" 2-file-modules.js, requires mathfun.js. 
+```
+
+
+There are three **sources for modules**:
+
+## 1. Built-in modules
+
+a) **Pre-packaged with Node** 
+
+e.g. *setInterval* and *setTimeout* are in the Node's global namespace
+
+b) **The ones that have to be required (most modules)**
+
+### 1-builtins.js
+
+The argument of the *require* method is the string identifier of the module. This is an example for the "os" module. 
+
+##  2. Project files
+1) Each .js file is its own module, a way of modularizing application's code. We do not include the .js extension in the require. One uses relative path navigation.
+ 
+###  2-file-modules.js
+
+In this example we require *mathfun.js*. 
+
 Note: One has to export a variable or function, otherwise it is not visible from outside.
+
+```js
 module.exports.variableName = variableName;
-If we try to use a variable that is not exported, we get a  warning that it is undefined
-Example: 3-file-modules-notExported
-3) A third party module via NPM
-installed via npm install module_name to the node_modules folder
-That is application specifical
-To have it accessible via the command line - globally
+```
+
+### 3-file-modules-notExported
+
+If we try to use a variable that is not exported, we get a warning that it is undefined.
+
+## 3. A third party module via NPM
+
+a) **Application specific**
+
+```js
+npm install module_name
+```
+
+installs the module to the *node_modules* folder.
+
+b) **Have the module accessible via the command line - globally**
+
+```js
 npm install -g module_name
-Example: the "require" module in 4-installed-modules.js
+```
 
-Events in node.js
+### 4-installed-modules.js
 
-Difference between callbacks and events
+Require the installed module "request". 
 
-Callback 
+
+# intro-to-node/3-events/ - Events in node.js
+
+## Difference between callbacks and events
+
+### Callback 
 - You do not receive any results until you receive all the results. In between, the results are stored in memory.
 - All or nothing proposition: If the error has been set, the call is assumed to have failed. 
 
-Events
+
+###  Events
 - The function returns a value immediately. The value is an instance of the EventEmitter object.  
-- An event is more of a publish/subscribe approach, you can invoke the "on" function repeatedly, to provide multiple functions to invoke on each event. In essence, subscribing to the events. Functions associated for each event will be invoked for each item of the result. 
+- An event is more of a publish/subscribe approach, you can invoke the "on" function repeatedly, to provide multiple functions to invoke on each event. That is, in essence, subscribing to the events. Functions associated for each event will be invoked for each item of the result. 
 - An error is emitted as a separate event, even after some events have been emitted. Access to partial results may be desirable in some situations. 
 
 Functions of an event emitter object: emit (publishing an event) and on (subscribing to an event).
 
-There are two ways of using event emitters:
-1) Returning an emitter
-Example: 1-events-return-emitter.js
-2) Inheriting from EventEmitter
-Example: 2-events-inherited.js and resource.js, split into two files. 
-Using this and util.inherits
+There are **two ways of using event emitters**:
 
-Streams in Node.js
-1) Streams are instances of EventEmitter with an agreed upon interface
-2) A stream is an instance of a ReadableStream or WriteableStrea or both
+**1) Returning an emitter**
+
+Example: 
+
+### 1-events-return-emitter.js
+
+**2) Inheriting from EventEmitter**
+
+Example: 
+
+### 2-events-inherited.js and resource.js
+
+split into two files, using *this* and *util.inherits*
+
+## Streams in Node.js
+
+- Streams are instances of EventEmitter with an agreed upon interface.
+
+- A stream is an instance of a ReadableStream or WriteableStrea or both.
 
 Interface for a ReadableStream
 readable - boolean indicator if the stream is readable or not
@@ -187,7 +254,7 @@ A stream that is both readable and writeable (request to a zipped file) - 7-pipe
 CreateGZip returns a stream that is both readable and writeable. It reads and uncompressed content, outputs compressed content. 
 zcat - Linux command for openning zipped file
 
-Accessing the local system
+# intro-to-node/4-system/ - Accessing the local system
 1) The process object: 1-process.js
 The process object provides a way for your application to manage its own processes as well as other processes on the system. It is available by default in your node application, it does not need to be required. 
 
@@ -220,8 +287,7 @@ The Buffer class provides a raw memory allocation for dealing with binary data d
 Buffers can be converted to/from strings using an encoding - ascii, utf8(default), binary, hex etc.
 Example: 4-buffers.js
 
-
-Making web requests in Node.js
+# intro-to-node/5-web/ - Making web requests in Node.js
 1. Making a client using http module
 http.request(options, callback)
 callback recieves the response
@@ -238,11 +304,13 @@ an argument, which accepts both a request and a response. This function is invok
 3. Web sockets
 5-websockets.js (server code) and index.html (client code)
 
-Testing node.js applications (basic)
+intro-to-node/6-testing/
+
+# intro-to-node/6-testing/ - Testing node.js applications (basic)
 1. Assert
 2. Mocha
 3. Should.js
 
-Scaling node.js applications
+# intro-to-node/7-scaling/ - Scaling node.js applications
 child_process - exec, spawn, fork
 
